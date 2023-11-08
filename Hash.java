@@ -44,10 +44,7 @@ public class Hash{
    * Returns true if the first three indices of this hash contain zeroes, false otherwise.
    */
   public boolean isValid(){
-    // return this.toString().substring(0, 6).equals("000000");
-
-    // STUB
-    return true;
+    return this.toString().substring(0, 3).equals("000");
   } // isValid()
 
   /**
@@ -55,13 +52,12 @@ public class Hash{
    */
   public String toString(){
     String result = "";
-
     // for each byte in this data
     for(int i = 0; i < this.data.length; i++){
       // convert the byte to an unsigned integer
       int hash = Byte.toUnsignedInt(this.data[i]);
       // write the byte to result string in hexadecimal
-      result += String.format("%x", hash);
+      result = result.concat(String.format("%x", hash));
     } // for
 
     return result;
