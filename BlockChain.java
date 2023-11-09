@@ -64,10 +64,7 @@ public class BlockChain {
   public Block mine(int amount) throws NoSuchAlgorithmException {
     Block newBlock = new Block(last.block.number + 1, amount, last.block.getHash()); // New block
     newBlock.mine(); // Mine the block
-    Node newNode = new Node(); // Instantiate newNode to be added
-    newNode.block = newBlock; // Set Block
-    last.next = newNode; // Point to newNode
-    last = newNode; // Set last to newNode
+    
     return newBlock;
   } // mine(int)
 
