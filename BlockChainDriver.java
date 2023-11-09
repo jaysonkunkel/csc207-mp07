@@ -9,6 +9,8 @@ import java.util.Scanner;
  */
 public class BlockChainDriver {
 
+  static boolean hasMined = false;
+
   /**
    * Takes a single command-line argument, the initial non-negative dollar amount that Alexis starts
    * with. Creates a blockchain with the initial amount and then repeatedly: 
@@ -33,7 +35,7 @@ public class BlockChainDriver {
 
     // while user-given command is not quit
     while (!command.equals("quit")) {   
-
+      pen.println("Command?");
       // print out the contents of the blockchain
       pen.println(bc.toString());
       // print the command menu
@@ -75,8 +77,6 @@ public class BlockChainDriver {
    */
   public static void handleCommand(BlockChain bc, String command, PrintWriter pen, Scanner scan){
 
-    boolean hasMined = false;
-
     switch (command) {
 
       // discoveres the nonce for a given transaction
@@ -98,11 +98,17 @@ public class BlockChainDriver {
           pen.println("Error: Block must be mined before it can be appended");
         } // if
         else{
-          pen.println("Amount transferred? ");
-          int amount = scan.nextInt();
-          pen.println("Nonce? ");
-          int nonce = scan.nextInt();
-          bc.append(new Block(bc.getSize()-1, amount, bc.last.block.getHash(), nonce));
+          try {
+            pen.println("Amount transferred? ");
+            int amount = scan.nextInt();
+            pen.println("Nonce? ");
+            int nonce = scan.nextInt();
+            bc.append(new Block(bc.getSize(), amount, bc.last.block.getHash(), nonce));
+            hasMined = false;
+          } catch (Exception e) {
+            pen.println("Error: Could not append block");
+            hasMined = false;
+          }
         } // else
         break;
 
