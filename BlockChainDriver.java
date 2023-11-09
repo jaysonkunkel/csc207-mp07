@@ -9,6 +9,9 @@ import java.util.Scanner;
  */
 public class BlockChainDriver {
 
+  /**
+   * Indicates whether or not a block has been mined and is waiting to be added to the blockchain.
+   */
   static boolean hasMined = false;
 
   /**
@@ -55,6 +58,8 @@ public class BlockChainDriver {
   /**
    * Checks that the single command-line argument is a non-negative integer and throws an error if not.
    * This is the inital value that Alexis starts with in the blockchain.
+   * 
+   * @pre args[0] is an integer
    */
   public static void initialCheck(String[] args) throws Exception{
     if (args.length != 1 || Integer.parseInt(args[0]) < 0) {
@@ -86,10 +91,14 @@ public class BlockChainDriver {
       // discoveres the nonce for a given transaction
       case "mine":
         System.out.print("Amount transferred? ");
-        int amt = Integer.parseInt(scan.nextLine());
         try{
+          // store the amount
+          int amt = Integer.parseInt(scan.nextLine());
+          // create a new block with the given amount
           Block b = bc.mine(amt);
+          // indicate a block has been mined
           hasMined = true;
+          // print nonce of mined block
           pen.println("amount = " + amt + ", nonce = " + b.getNonce());
         } catch (NoSuchAlgorithmException e){
           pen.println("Error: Could not mine block");
@@ -104,15 +113,19 @@ public class BlockChainDriver {
         else{
           try {
             System.out.print("Amount transferred? ");
+            // store the amount
             int amount = Integer.parseInt(scan.nextLine());
             System.out.print("Nonce? ");
+            // store the nonce
             int nonce = Integer.parseInt(scan.nextLine());
+            // create a new block with the mined nonce
             bc.append(new Block(bc.getSize(), amount, bc.last.block.getHash(), nonce));
+            // indicate a mined block has been appended; a new one must be mined before next append
             hasMined = false;
           } catch (Exception e) {
             pen.println("Error: Could not append block");
             hasMined = false;
-          }
+          } // try...catch
         } // else
         break;
 
@@ -151,6 +164,6 @@ public class BlockChainDriver {
         pen.println("Error: Invalid input");
         break;
       }// switch(String)
-  } // andleCommand(PrintWriter, String)
+  } // handleCommand(PrintWriter, String)
 
 } // class BlockChainDriver
