@@ -38,7 +38,7 @@ public class BlockChain {
   public BlockChain(int initial) throws NoSuchAlgorithmException {
     // ignore prevHash
     Node node = new Node();
-    node.block = new Block(1, initial, null); // Assuming the first block number is 1
+    node.block = new Block(0, initial, null); // Assuming the first block number is 1
     this.first = node;
     this.last = node;
   } // BlockChain(int)
@@ -54,13 +54,9 @@ public class BlockChain {
    * @throws NoSuchAlgorithmException
    */
   public Block mine(int amount) throws NoSuchAlgorithmException {
-
     Block newBlock = new Block(last.block.number + 1, amount, last.block.getHash());
     newBlock.mine();
-    Node newNode = new Node();
-    newNode.block = newBlock;
-    last.next = newNode;
-    last = newNode;
+  
     return newBlock;
   } // mine(int)
 
@@ -83,7 +79,8 @@ public class BlockChain {
    * Adds this block to the list. Throws an IllegalArgumentException if this block is invalid.
    */
   public void append(Block blk) throws IllegalArgumentException {
-    if (blk.isValid()) {
+
+    if (blk.hash.isValid() && isValidBlockChain()) {
       Node newNode = new Node();
       newNode.block = blk;
 
@@ -95,7 +92,7 @@ public class BlockChain {
 
       last = newNode;
     } else {
-      throw new IllegalArgumentException("Invalid Block");
+      throw new IllegalArgumentException("Chain is invalid!");
     }
   } // append(Block)
 
@@ -133,10 +130,24 @@ public class BlockChain {
    * Walks the blockchain and returns true if all blocks are valid, false otherwise.
    */
   public boolean isValidBlockChain() {
-    String hash = this.toString();
+    Node curr = first;
+    int amount = curr.block.getAmount();
+    int bal1 = amount;
+    int bal2 = 0;
+    while (curr != null) {
+      Block block = curr.block;
+      if (!block.hash.isValid()) {
+        return false;
+      }
 
-    if (hash.substring(0, 3).equals("000")) {
-      return false;
+      bal1 += amount;
+      bal2 -= amount;
+
+      if (bal1 + bal2 != amount || bal1 < 0 || bal1 < 0) {
+        return false;
+      }
+
+      curr = curr.next;
     }
 
     return true;
@@ -147,13 +158,14 @@ public class BlockChain {
    * single line, e.g., Alexis: 300, Blake: 0.
    */
   public void printBalances() {
-    int alexisBal = 0;
+    Node curr = first;
+    int amount = curr.block.getAmount();
+    int alexisBal = amount;
     int blakeBal = 0;
 
-    Node curr = first;
-    while (curr != null) {
-      int amount = curr.block.getAmount();
-
+    while (curr.next != null) {
+      curr = curr.next;
+      amount = curr.block.getAmount();
       if (amount > 0) {
         alexisBal -= amount;
         blakeBal += amount;
@@ -161,8 +173,6 @@ public class BlockChain {
         alexisBal += amount;
         blakeBal -= amount;
       }
-
-      curr = curr.next;
     }
 
     System.out.println("Alexis: <" + alexisBal + ">, " + "Blake: <" + blakeBal + ">");
@@ -177,7 +187,7 @@ public class BlockChain {
 
     Node curr = first;
     while (curr != null) {
-      str.concat(curr.block.toString()).concat("\n");
+      str += curr.block.toString() + "\n";
       curr = curr.next;
     }
     return str;
