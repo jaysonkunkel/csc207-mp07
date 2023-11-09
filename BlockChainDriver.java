@@ -33,18 +33,22 @@ public class BlockChainDriver {
     // stores a user-input command
     String command = "";
 
+    // print the initial contents of the blockchain
+    pen.println(bc.toString());
+
     // while user-given command is not quit
-    while (!command.equals("quit")) {   
-      pen.println("Command?");
-      // print out the contents of the blockchain
-      pen.println(bc.toString());
-      // print the command menu
-      printMenu(pen);  
+    while (!command.equals("quit")) {  
+      // prompt for a command 
+      System.out.print("Command? ");
+  
       // get next command from user
       command = scan.nextLine();
+
       // perform corresponding action to command
       handleCommand(bc, command, pen, scan);
 
+      // print the contents of the blockchain
+      pen.println("\n" + bc.toString());
     } // while
   } // main(String[])
 
@@ -81,8 +85,8 @@ public class BlockChainDriver {
 
       // discoveres the nonce for a given transaction
       case "mine":
-        pen.println("Amount transferred? ");
-        int amt = scan.nextInt();
+        System.out.print("Amount transferred? ");
+        int amt = Integer.parseInt(scan.nextLine());
         try{
           Block b = bc.mine(amt);
           hasMined = true;
@@ -99,10 +103,10 @@ public class BlockChainDriver {
         } // if
         else{
           try {
-            pen.println("Amount transferred? ");
-            int amount = scan.nextInt();
-            pen.println("Nonce? ");
-            int nonce = scan.nextInt();
+            System.out.print("Amount transferred? ");
+            int amount = Integer.parseInt(scan.nextLine());
+            System.out.print("Nonce? ");
+            int nonce = Integer.parseInt(scan.nextLine());
             bc.append(new Block(bc.getSize(), amount, bc.last.block.getHash(), nonce));
             hasMined = false;
           } catch (Exception e) {
